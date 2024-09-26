@@ -1,11 +1,72 @@
-### 1.5.4 Contagem de Palavras
+### Anotações sobre Contagem de Palavras (Capítulo 1.5.4 do Livro *The C Programming Language*)
 
-Hoje, aprendi a fazer um programa em C que conta o número de linhas, palavras e caracteres de uma entrada. O código se baseia em um conceito simples, mas que exige atenção: identificar o que é considerado "dentro de uma palavra" e "fora de uma palavra". Eu usei duas constantes, `IN` e `OUT`, para representar esses dois estados, e isso me ajudou a deixar o código mais fácil de entender. O legal é que, em vez de usar números diretos, as constantes deixam o código mais legível.
+---
 
-Comecei definindo as variáveis necessárias: `nl` (número de linhas), `nw` (número de palavras) e `nc` (número de caracteres). Inicializei todas essas variáveis com zero. A ideia principal do programa é percorrer cada caractere da entrada, incrementando o contador de caracteres sempre que um caractere é lido, e o de linhas toda vez que o caractere é uma nova linha (`\n`).
+**Reflexões Pessoais**:
+Hoje estou aprendendo sobre como contar linhas, palavras e caracteres em um texto. O código é bem compacto, mas ainda estou confuso sobre o uso do operador `==`, especialmente na condição `state == OUT`. Vou tentar entender isso melhor.
 
-Agora, a parte interessante é contar as palavras. Se o programa encontra um espaço em branco, uma tabulação (`\t`) ou uma nova linha (`\n`), isso significa que estamos "fora de uma palavra" e o estado é definido como `OUT`. Porém, se o caractere atual não for um desses e o estado anterior era `OUT`, significa que encontramos o início de uma nova palavra. Aí, o estado muda para `IN` e o contador de palavras é incrementado.
+---
 
-Um detalhe que achei interessante é o uso do operador `||`, que significa "OU". Com ele, eu posso verificar se o caractere é um espaço, uma nova linha ou uma tabulação tudo numa única linha. Outra coisa que me chamou atenção foi o uso do `else` no código, para garantir que se uma condição não for atendida, outra ação alternativa é tomada. Isso torna o código mais eficiente.
+**Resumo do Código**:
+O programa que estamos estudando conta linhas, palavras e caracteres, com a definição de que uma palavra é qualquer sequência de caracteres que não contém um espaço em branco, uma tabulação ou uma nova linha. Aqui está o código:
 
-Estou achando bem legal ver como pequenas mudanças na forma de estruturar o código podem fazer grande diferença na clareza e funcionalidade!
+```c
+#include <stdio.h>
+#define IN 1 /* dentro de uma palavra */
+#define OUT 0 /* fora de uma palavra */
+
+/* contar linhas, palavras e caracteres na entrada */
+main() {
+    int c, nl, nw, nc, state;
+    state = OUT;
+    nl = nw = nc = 0;
+    while ((c = getchar()) != EOF) {
+        ++nc;
+        if (c == '\n')
+            ++nl;
+        if (c == ' ' || c == '\n' || c == '\t')
+            state = OUT;
+        else if (state == OUT) {
+            state = IN;
+            ++nw;
+        }
+    }
+    printf("%d %d %d\n", nl, nw, nc);
+}
+```
+
+---
+
+**Análise do Código**:
+
+1. **Definições de Estado**:
+   - `#define IN 1` e `#define OUT 0` são usados para representar se estamos dentro de uma palavra ou fora dela. Isso melhora a legibilidade do código, em vez de usar os números `1` e `0` diretamente.
+
+2. **Inicialização das Variáveis**:
+   - A linha `nl = nw = nc = 0;` inicializa o número de linhas (`nl`), palavras (`nw`) e caracteres (`nc`) como zero. Isso é possível porque a atribuição é feita da direita para a esquerda.
+
+3. **Contagem de Caracteres**:
+   - A cada iteração do loop, `nc` é incrementado, contando cada caractere lido.
+
+4. **Uso do `==`**:
+   - O operador `==` é um operador de comparação que verifica se os valores de dois operandos são iguais. No contexto de `state == OUT`, estamos checando se a variável `state` é igual a `OUT` (ou seja, se estamos fora de uma palavra). Se essa condição for verdadeira, significa que acabamos de encontrar o início de uma nova palavra.
+
+5. **Condições**:
+   - A linha `if (c == ' ' || c == '\n' || c == '\t')` verifica se o caractere atual `c` é um espaço, nova linha ou tabulação. Se for um desses, o programa define o estado como `OUT`, indicando que não estamos dentro de uma palavra.
+   - O uso do operador `||` (OU) permite que a condição seja verdadeira se qualquer uma das comparações for verdadeira.
+
+6. **Estruturas de Controle**:
+   - O `else if (state == OUT)` verifica se o estado é `OUT`. Se for, muda para `IN` e incrementa o contador de palavras (`nw`), indicando que uma nova palavra foi encontrada.
+
+---
+
+**Dúvidas e Perguntas**:
+- **Uso do `==`**: Por que devemos usar `==` para comparar valores? 
+   - O `==` é utilizado para comparação, enquanto `=` é um operador de atribuição. Se eu usar `state = OUT` por engano, estaria mudando o estado para `OUT`, em vez de compará-lo.
+
+---
+
+**Próximos Passos**:
+- Vou praticar escrevendo meus próprios programas que utilizam contagem de palavras e experimentando com diferentes entradas para ver como o estado muda. Além disso, preciso revisar mais sobre operadores de comparação e atribuição para não confundir os dois.
+
+---
